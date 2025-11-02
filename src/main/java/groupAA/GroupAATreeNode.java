@@ -276,7 +276,7 @@ class GroupAATreeNode {
 
         if (bestAction == null) {
             throw new AssertionError("Unexpected - no selection made.");
-        }
+         }
 
         return bestAction;
     }

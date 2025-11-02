@@ -2,7 +2,6 @@ package groupAA;
 
 //import core.AbstractGameState;
 import core.interfaces.IStateHeuristic;
-import evaluation.optimisation.TunableParameters;
 import players.PlayerParameters;
 
 import java.util.Arrays;
@@ -13,7 +12,7 @@ public class GroupAAParams extends PlayerParameters {
     public int rolloutLength = 20; // default 10
     public int maxTreeDepth = 100;
     public double epsilon = 1e-6; // small numeric noise used in UCT
-    public double biasWeigh = 0.6; // progressive-bias weight (0.3 <-> 0.7 is safe) 0.6
+    public double biasWeight = 0.6; // progressive-bias weight (0.3 <-> 0.7 is safe) 0.6
     public IStateHeuristic heuristic = new GroupAAHeuristic(); // default to your heuristic
 
     // NEW: rollout policy and exploration inside rollout (epsilon-greedy)
