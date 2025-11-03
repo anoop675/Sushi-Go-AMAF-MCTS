@@ -1,8 +1,8 @@
 GroupAA MCTS Agent (Sushi Go)
 =============================
 
-This project implements a Monte Carlo Tree Search (MCTS) agent with progressive bias
-and optional RAVE (Rapid Action Value Estimation) enhancements for the game Sushi Go!
+This project implements a Monte Carlo Tree Search (MCTS) agent with progressive bias augmented UCB as the tree policy
+and a Greedy One-Step Lookahead Rollout Policy with an Expected Utility Maximization (EUM) Heuristic + light-weight Opponent Modelling
 as part of the AI Tournament framework.
 
 --------------------------------------------------------------------
@@ -10,15 +10,15 @@ PROJECT STRUCTURE
 --------------------------------------------------------------------
 
 src/
- └── groupAA/
-     ├── SushiGoAgentGroupAA.java          -> Main agent class (entry point for tournament)
-     ├── GroupAATreeNode.java              -> Core MCTS node with UCB, RAVE, and rollout logic
-     ├── GroupAABasicTreeNode.java         -> Simplified baseline MCTS node (for testing)
-     ├── GroupAAParams.java                -> Parameter tuning and configuration
-     ├── GroupAAHeuristic.java             -> Domain-specific heuristic for evaluating states
-     ├── GroupAARolloutPolicy.java         -> Interface for rollout policy
-     ├── GroupAAGreedyRolloutPolicy.java   -> Default greedy rollout using heuristic
-     ├── GroupAARandomRolloutPolicy.java   -> Optional purely random rollout
+ └── main/java/
+           └── groupAA/
+               ├── SushiGoAgentGroupAA.java          -> Main agent class (entry point for tournament)
+               ├── GroupAATreeNode.java              -> Core MCTS node with UCB, Progressive Biasing, and rollout logic
+               ├── GroupAAParams.java                -> Parameter tuning and configuration
+               ├── GroupAAHeuristic.java             -> Domain-specific heuristic for evaluating states
+               ├── GroupAARolloutPolicy.java         -> Interface for rollout policy
+               ├── GroupAAGreedyRolloutPolicy.java   -> Default greedy rollout using heuristic
+               ├── groupAA_mcts.json                 -> Agent configuration file (used in tournament)
 
 --------------------------------------------------------------------
 AGENT INITIALIZATION
@@ -36,71 +36,30 @@ GroupAAParams loads the following configurations:
   - Exploration constant (K)
   - Progressive bias weight (biasWeight)
   - Maximum tree depth
+  - Epsilon noise constant
   - Rollout policy (default: GroupAAGreedyRolloutPolicy)
   - State heuristic (GroupAAHeuristic)
 
 --------------------------------------------------------------------
-ALGORITHM OVERVIEW
+RUNNING THE TOURNAMENT
 --------------------------------------------------------------------
 
-Monte Carlo Tree Search (MCTS) is used as the decision-making algorithm.
-The process includes:
+1. Ensure the tournament configuration file is created:
+   (e.g., `config/json/RunGames/GroupAA_Tournament.json`)
 
-1. Selection:
-   Nodes are selected using UCB with progressive bias (and optional RAVE):
+2. From the project root, execute the following command:
 
-       UCT = Q + K * sqrt(ln(N_parent) / (N_child + ε))
+       java -cp "target/classes:lib/*" evaluation.RunGames config=json/config/RunGames/GroupAA_Tournament.json
 
-2. Expansion:
-   A new child node is created for the chosen action.
+   (You can also run it directly from your IDE by setting the CLI argument:)
 
-3. Simulation (Rollout):
-   The GreedyRolloutPolicy simulates the rest of the game using a heuristic:
+       config=json/config/RunGames/GroupAA_Tournament.json
 
-       score = heuristic.evaluateState(state, playerId);
-
-4. Backpropagation:
-   The results are propagated up the tree.
-   When RAVE is enabled, AMAF statistics are also updated.
-
---------------------------------------------------------------------
-RAVE (Rapid Action Value Estimation)
---------------------------------------------------------------------
-
-RAVE combines direct node statistics with AMAF (All Moves As First) values
-to improve early estimations. Controlled via parameter "raveK" in code.
-Setting raveK = 0.0 disables RAVE.
-
---------------------------------------------------------------------
-RUNNING THE AGENT IN TOURNAMENT
---------------------------------------------------------------------
-
-1. Compile the project:
-
-       javac -d out -cp "lib/*:src" src/groupAA/*.java
-
-2. Package into a JAR file:
-
-       jar cf GroupAAAgent.jar -C out .
-
-3. Run the tournament:
-
-       java -cp "GroupAAAgent.jar:lib/*" games.sushigo.SushiGoTournament
-
-The tournament engine automatically detects all agents in package "groupAA"
-and pits them against others.
-
---------------------------------------------------------------------
-RUNNING A SINGLE MATCH
---------------------------------------------------------------------
-
-You can run a quick match manually:
-
-       java -cp "GroupAAAgent.jar:lib/*" core.Tournament --game SushiGo --players groupAA.SushiGoAgentGroupAA otherpackage.RandomAgent
-
-Or:
-
-       java -cp "GroupAAAgent.jar:lib/*" games.sushigo.SushiGoGame --player groupAA.SushiGoAgentGroupAA
+   The TAG framework will automatically:
+     - Parse the JSON configuration
+     - Load the agents defined in the `config/json/agents` folder
+     - Run all matchups as per the tournament mode (e.g., Random or Exhaustive)
+     - Generate a summary of results (win rates, mean ordinals, etc.) in TournamentResults.txt and GAME_OVER.csv
 
 --------------------------------------------------------------------
 CONFIGURATION PARAMETERS
@@ -108,13 +67,13 @@ CONFIGURATION PARAMETERS
 
 All parameters are defined in GroupAAParams.java as TunableParameters.
 
-Parameter      Description                        Default
---------------------------------------------------------------------
-K              Exploration constant               0.7
-biasWeight     Progressive bias weight             0.6
-rolloutLength  Maximum rollout depth               20
-maxTreeDepth   Tree search limit                   100
-raveK          RAVE mixing constant (optional)     0.5
+K              - Exploration constant for UCB                  (fine-tuned: 0.7)
+biasWeight     - Weight of heuristic progressive bias          (default: 0.6)
+rolloutLength  - Max rollout simulation depth                  (fine-tuned: 20)
+maxTreeDepth   - Maximum MCTS tree depth                       (fine-tuned: 100)
+epsilon        - Small numeric constant to avoid division by 0 (default: 1e-6)
+heuristic      - Domain heuristic (GroupAAHeuristic)
+rolloutPolicy  - Rollout strategy (default: GroupAAGreedyRolloutPolicy)
 
 --------------------------------------------------------------------
 LOGGING
@@ -128,15 +87,6 @@ Examples of log outputs:
 
 To enable logs, run Java with:
   -Djava.util.logging.config.file=logging.properties
-
---------------------------------------------------------------------
-TIPS
---------------------------------------------------------------------
-
-- If RAVE underperforms, set raveK = 0.0 to disable it.
-- If exploration is too high, reduce K to 0.5–0.7.
-- Use GroupAAGreedyRolloutPolicy for heuristic-guided rollouts.
-- Use GroupAARandomRolloutPolicy for more stochastic rollouts.
 
 --------------------------------------------------------------------
 AUTHORS
