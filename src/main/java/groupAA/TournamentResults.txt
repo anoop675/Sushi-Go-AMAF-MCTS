@@ -82,3 +82,24 @@ GroupAA MCTS Agent: Win rate 0.88 +/- 0.015	Mean Ordinal 1.13 +/- 0.02
 basicmcts: Win rate 0.11 +/- 0.014	Mean Ordinal 2.08 +/- 0.02
 oslaPlayer: Win rate 0.01 +/- 0.005	Mean Ordinal 2.78 +/- 0.02
 
+Game: SushiGo, Players: 3, Mode: RANDOM, TotalGames: 250, GamesPerMatchup: 250
+basicmcts got 24.00 points. basicmcts won 9.6% of the 250 games of the tournament. basicmcts won 9.6% of the 250 games it played during the tournament.
+basicmcts got a mean score of 37.36.
+basicmcts won 9.6% of the 250 games against GroupAA MCTS Agent.
+basicmcts won 9.6% of the 250 games against randomPlayer.
+
+GroupAA MCTS Agent got 223.50 points. GroupAA MCTS Agent won 89.2% of the 250 games of the tournament. GroupAA MCTS Agent won 89.2% of the 250 games it played during the tournament.
+GroupAA MCTS Agent got a mean score of 52.67.
+GroupAA MCTS Agent won 89.2% of the 250 games against basicmcts.
+GroupAA MCTS Agent won 89.2% of the 250 games against randomPlayer.
+
+randomPlayer got 2.50 points. randomPlayer won 0.8% of the 250 games of the tournament. randomPlayer won 0.8% of the 250 games it played during the tournament.
+randomPlayer got a mean score of 30.32.
+randomPlayer won 0.8% of the 250 games against basicmcts.
+randomPlayer won 0.8% of the 250 games against GroupAA MCTS Agent.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+GroupAA MCTS Agent: Win rate 0.89 +/- 0.019	Mean Ordinal 1.11 +/- 0.02
+basicmcts: Win rate 0.10 +/- 0.019	Mean Ordinal 2.13 +/- 0.04
+randomPlayer: Win rate 0.01 +/- 0.006	Mean Ordinal 2.75 +/- 0.03
+

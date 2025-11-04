@@ -1,5 +1,9 @@
 /*
     Custom Expected Utility Maximization/Estimation (EUM) Heuristic with Opponent Modelling for Greedy Rollout Policy
+    Why does the heuristic use expectations (expected values to calculate the average likelihood of the event (like completing combos, pairing useful card synergies, etc.)
+    because, LLN (Law of Large Numbers) says that if you repeat a random process many times, the average outcome converges to the expected value.
+    (The law of large numbers states that as the number of trials in a random experiment increases, the average of the results will get closer to the expected value)
+    Therefore, even though the agent only observes one trajectory, acting based on expected value gives behavior that would be optimal in the long run across many games.
  */
 package groupAA;
 
